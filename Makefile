@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS= -Wall -O0 -g -lm -fPIC
+CFLAGS= -Wall -Wextra -O0 -g -lm -fPIC
 LIST = reverse scan
 
 all: ${LIST}
