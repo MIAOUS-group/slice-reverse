@@ -37,12 +37,13 @@ int is_intel() {
   // Input EAX = 0x0 for vendor identification string
   int eax_in = 0;
   int ecx_in = 0;
-  int name[3] = {0, 0, 0};
+  int name[4] = {0, 0, 0, 0};
   
   cpuid(eax_in, ecx_in, eax, name[0], name[2], name[1]);
   
-  if(strcmp((char*)name, "GenuineIntel") != 0) 
+  if(strcmp((char*)name, "GenuineIntel") != 0) {
     return 0;
+  }
     
   return 1;
 }

@@ -53,7 +53,6 @@ int decdigits[] = {
 #define mo_fill 0x40
 #define mo_c    0x80
 
-const char *program;
 
 /*void usage(void)*/
 /*{*/
