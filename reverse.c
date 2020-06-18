@@ -683,14 +683,16 @@ void reverse_generic() {
   }
 
   if (DEBUG) {
-    printf("Progress: ");
-    fflush(stdout);
+    fprintf(stderr, "Progress: ");
+    fflush(stderr);
   }
   // Find the first 21 bits
   for (i = 0; i < 15; i++) {
+    printf("Bit %lld\n", i + 6);
     for (j = 0; j < ADDR_PER_BIT; j++) {
       offset1 = j << 6;
       offset2 = offset1 ^ (1 << (i + 6));
+      printf("Comparing %p and %p:", mem + offset1, mem + offset2);
       if (clflush) {
         slice1 = monitor_single_address_clflush((uintptr_t)mem + offset1, 0);
         slice2 = monitor_single_address_clflush((uintptr_t)mem + offset2, 0);
@@ -701,20 +703,29 @@ void reverse_generic() {
         slice1 = monitor_single_address((uintptr_t)mem + offset1);
         slice2 = monitor_single_address((uintptr_t)mem + offset2);
       }
+      printf("Slice1 %d, Slice2 %d\n", slice1, slice2);
       // for each address bit i of function bit k
       for (k = 0; k < nbits; k++) {
         oj_a1 = (slice1 >> k) & 1; // bit k of output of slice for address 1
         oj_a2 = (slice2 >> k) & 1;
         if (oj_a1 != oj_a2) {
+          printf("Found address bit %lld used for hash bit %d\n", i, k);
           w[k][i]++;
         }
       }
     }
+    printf("For addr bit %lld: ", i + 6);
+    for (k = 0; k < nbits; k++) {
+      printf("hash bit %d: %d samples, ", k, w[k][i]);
+    }
+    printf("\n");
     if (DEBUG) {
-      printf(".");
-      fflush(stdout);
+      fprintf(stderr, ".");
+      fflush(stderr);
     }
   }
+
+  printf("Done bit up to %lld\n", i + 6);
 
   munmap(mem, HUGE_PAGE_SIZE_2M);
 
@@ -730,7 +741,7 @@ void reverse_generic() {
   FILE *fp;
 
   if ((fp = popen(cmd, "r")) == NULL) {
-    printf("Error opening pipe!\n");
+    fprintf(stderr, "Error opening pipe!\n");
     exit(EXIT_FAILURE);
   }
 
@@ -739,7 +750,7 @@ void reverse_generic() {
   }
 
   if (pclose(fp)) {
-    printf("Command not found or exited with error status\n");
+    fprintf(stderr, "Command not found or exited with error status\n");
     exit(EXIT_FAILURE);
   }
 
@@ -751,7 +762,7 @@ void reverse_generic() {
                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB,
                      -1, 0);
   if (mem == MAP_FAILED) {
-    printf("second mmap huge page has failed \n");
+    fprintf(stderr, "second mmap huge page has failed \n");
     exit(EXIT_FAILURE);
   }
   for (i = 0; i < MMAP_SIZE_CORE; i++) {
@@ -822,10 +833,15 @@ void reverse_generic() {
         }
       }
     }
+    printf("For addr bit %lld: ", i + 6 + 15);
+    for (k = 0; k < nbits; k++) {
+      printf("hash bit %d: %d samples, ", k, w[k][i]);
+    }
+    printf("\n");
 
     if (DEBUG) {
-      printf(".");
-      fflush(stdout);
+      fprintf(stderr, ".");
+      fflush(stderr);
     }
   }
 
@@ -834,14 +850,17 @@ void reverse_generic() {
   /*
    * Look at the tables to find bits that intervene in the function
    */
-  printf("\n");
+  fprintf(stderr, "\n");
   for (j = 0; j < nbits; j++) {
+    fprintf(stderr, "\no%d =", j);
     printf("\no%d =", j);
     for (i = 0; i < bit_max; i++) {
       if (w[j][i] > THRESHOLD) {
+        fprintf(stderr, " b%llu", i + 6);
         printf(" b%llu", i + 6);
       }
     }
+    fprintf(stderr, "\n");
     printf("\n");
   }
 }
