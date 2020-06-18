@@ -9,7 +9,7 @@
 #include "poke.h"
 #include "util.h"
 
-int nb_pokes = 10000;
+int nb_pokes = 100000;
 
 uintptr_t poke(uintptr_t addr) {
   static uint64_t lastVirtualPage = -1;
