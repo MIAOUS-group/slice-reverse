@@ -665,7 +665,7 @@ void reverse_generic() {
   int slice1, slice2;
   int nbits = ceil(log2(nb_cores));
   int oj_a1, oj_a2;
-  int w[4][29] = {{0}};
+  int w[4][40] = {{0}};
 
   /*
    * Find the first 21 bits
