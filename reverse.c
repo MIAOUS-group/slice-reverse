@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
     break;
   case 85:
     archi = "skl"; // Skyake (xeon) -> not supported yet
-    printf("Micro-architecure not supported (Xeon Skylake)\n");
+    printf("Micro-architecure not supported (Skylake SP)\n");
     exit(EXIT_FAILURE);
   case 142:
   case 158:
@@ -280,17 +280,25 @@ int main(int argc, char **argv) {
   }
   // Cores
   else if (!strcmp(class, "core")) {
-    max_slices = 4;                                       // FIXME
+    max_slices = 4;
     if (!strcmp(archi, "skl") || !strcmp(archi, "kbl")) { // >= skylake
       msr_unc_perf_global_ctr = 0xe01;
       val_enable_ctrs = 0x20000000;
+      max_slices = 7;
+      if (nb_cores == 8) {
+        nb_cores = 7;
+      }
+      msr_unc_cbo_perfevtsel0 = (unsigned long long[]){
+          0x700, 0x710, 0x720, 0x730, 0x740, 0x750, 0x760};
+      msr_unc_cbo_per_ctr0 = (unsigned long long[]){0x706, 0x716, 0x726, 0x736,
+                                                    0x746, 0x756, 0x766};
     } else {
       msr_unc_perf_global_ctr = 0x391;
       val_enable_ctrs = 0x2000000f;
+      msr_unc_cbo_perfevtsel0 =
+          (unsigned long long[]){0x700, 0x710, 0x720, 0x730};
+      msr_unc_cbo_per_ctr0 = (unsigned long long[]){0x706, 0x716, 0x726, 0x736};
     }
-    msr_unc_cbo_perfevtsel0 =
-        (unsigned long long[]){0x700, 0x710, 0x720, 0x730};
-    msr_unc_cbo_per_ctr0 = (unsigned long long[]){0x706, 0x716, 0x726, 0x736};
     val_disable_ctrs = 0x0;
     val_select_evt_core = 0x408f34;
     val_reset_ctrs = 0x0;
@@ -298,6 +306,18 @@ int main(int argc, char **argv) {
 
   if (clflush) {
     printf("Using clflush method\n");
+  }
+
+  /*
+   * Verify number of cores is coherent with micro-architecture
+   */
+  if (nb_cores > max_slices) {
+    fprintf(stderr,
+            "Specified number of cores (%d) incoherent with maximum number of "
+            "core of specified micro-architecure (%d for %s). \n",
+            nb_cores, max_slices, archi);
+    print_help();
+    exit(1);
   }
 
   // Do we scan a few addresses or do we reverse-engineer the function
