@@ -285,8 +285,8 @@ int main(int argc, char **argv) {
       msr_unc_perf_global_ctr = 0xe01;
       val_enable_ctrs = 0x20000000;
       max_slices = 7;
-      if (nb_cores == 8) {
-        nb_cores = 7;
+      if (nb_cores == 8) {  // 8 core client coffee lakes are missing one CBox.
+        nb_cores = 7;       // we use the 7 known ones and the 8th values can be deduced
       }
       msr_unc_cbo_perfevtsel0 = (unsigned long long[]){
           0x700, 0x710, 0x720, 0x730, 0x740, 0x750, 0x760};
