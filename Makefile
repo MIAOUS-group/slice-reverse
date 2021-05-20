@@ -11,13 +11,13 @@ wrmsr.o:wrmsr.c wrmsr.h
 rdmsr.o:rdmsr.c rdmsr.h
 scan.o: scan.c scan.h global_variables.h
 reverse.o:reverse.c reverse.h global_variables.h
+arch.o: arch.c arch.h
 
+reverse: reverse.o util.o poke.o wrmsr.o rdmsr.o monitoring.o arch.o
+	${CC} -Wall -O0 -g reverse.o util.o poke.o wrmsr.o rdmsr.o arch.o monitoring.o -o reverse -lm
 
-reverse: reverse.o util.o poke.o wrmsr.o rdmsr.o monitoring.o
-	${CC} -Wall -O0 -g reverse.o util.o poke.o wrmsr.o rdmsr.o  monitoring.o -o reverse -lm
-
-scan: monitoring.o scan.o util.o poke.o wrmsr.o rdmsr.o
-	${CC} -Wall -O0 -g scan.o util.o poke.o wrmsr.o rdmsr.o monitoring.o -o scan -lm
+scan: monitoring.o scan.o util.o poke.o wrmsr.o rdmsr.o arch.o
+	${CC} -Wall -O0 -g scan.o util.o poke.o wrmsr.o rdmsr.o arch.o monitoring.o -o scan -lm
 
 
 

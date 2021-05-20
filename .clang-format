@@ -1,0 +1,33 @@
+---
+
+#
+# You can add options here to match your desired format.
+# For reference, see the following URL:
+#     https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# To start 'else' statements on a new line, add:
+#     BreakBeforeBraces: Stroustrup
+#
+# To start braces on a new line, add:
+#     BreakBeforeBraces: Allman
+#
+# To use tabs to indent, change the indent width to 8, and add:
+#     UseTab: ForIndentation
+#
+
+# Use C/C++ as the language
+Language:      Cpp
+
+# Inherit our style from LLVM
+BasedOnStyle:  LLVM
+
+# Use 4 spaces as our indent width
+IndentWidth:   4
+
+# Reformat lines to be under 80 characters
+ColumnLimit:   80
+
+# Do not allow single-line functions (unless empty)
+AllowShortFunctionsOnASingleLine: Empty
+
+---
