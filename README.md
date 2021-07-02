@@ -1,5 +1,8 @@
 # slice-reverse
 
+Code from the paper "[Reverse Engineering Intel Last-Level Cache Complex Addressing Using Performance Counters](https://cmaurice.fr/pdf/raid15_maurice.pdf)" by Clémentine Maurice, Nicolas Le Scouarnec, Christoph Neumann, Olivier Heen and Aurélien Francillon, published at RAID 2015, with updates for Kaby Lake CPUs.
+
+The code is distributed under the GNU General Public License, version 2.
 
 ## Programs scan and reverse
 
